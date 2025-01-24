@@ -1,0 +1,27 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    services:
+      docker:
+        image: docker:dind
+        options: --privileged --shm-size=2g
+        ports:
+          - 2375:2375
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: update_system
+      run: sudo apt update
+    - name: test_docker
+      run: docker version && docker info
+    - name: build_images
+      run: sh create_images.sh
