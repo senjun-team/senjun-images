@@ -30,10 +30,11 @@ ghc-options:
 - -Widentities
 - -Wincomplete-record-updates
 - -Wincomplete-uni-patterns
-- -Wmissing-export-lists
 - -Wmissing-home-modules
 - -Wpartial-fields
 - -Wredundant-constraints
+- -fno-warn-missing-export-lists
+- -Wno-type-defaults
 
 library:
   source-dirs: src
@@ -59,3 +60,7 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - user-code
+    - hspec
+    - hspec-api
+    - hspec-core
+    - QuickCheck
