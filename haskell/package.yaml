@@ -33,7 +33,7 @@ ghc-options:
 - -Wmissing-home-modules
 - -Wpartial-fields
 - -Wredundant-constraints
-- -fno-warn-missing-export-lists
+- -Wno-missing-export-lists
 - -Wno-type-defaults
 
 library:
@@ -47,6 +47,8 @@ executables:
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N
+    - -Wno-missing-export-lists
+    - -Wno-type-defaults
     dependencies:
     - user-code
 
@@ -58,6 +60,8 @@ tests:
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N
+    - -Wno-missing-export-lists
+    - -Wno-type-defaults
     dependencies:
     - user-code
     - hspec

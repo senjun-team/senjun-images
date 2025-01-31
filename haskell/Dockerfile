@@ -17,10 +17,13 @@ USER code_runner
 
 RUN stack new user-code
 
-COPY package.yaml /home/code_runner/.stack
-COPY config.yaml /home/code_runner/user-code
+COPY config.yaml /home/code_runner/.stack
 
-RUN cd /home/code_runner/user-code/ && stack build
+COPY task/MachineFormatter.hs /home/code_runner/user-code/test/
+COPY package.yaml /home/code_runner/user-code
+
+# cache warming for all dependencies including tests
+RUN cd /home/code_runner/user-code/ && stack build --test
 
 # Directory for task launching
 RUN mkdir /home/code_runner/task 
@@ -29,7 +32,4 @@ COPY task/run-task.sh /home/code_runner/task
 RUN mkdir /home/code_runner/playground 
 COPY playground/run-playground.sh /home/code_runner/playground
 
-COPY task/MachineFormatter.hs /home/code_runner/user-code/test/
-
-
-ENTRYPOINT ["bash"]
+# ENTRYPOINT ["bash"]

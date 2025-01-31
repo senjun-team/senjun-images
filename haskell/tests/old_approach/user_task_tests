@@ -5,7 +5,10 @@ plan = """Hello Haskell!
 """
 
 s = r"""
-#INJECT-ESCAPED-b585472fa
+module Main where
+
+main :: IO ()
+main = putStrLn "Hello Haskell!"
 """
 
 if __name__ == "__main__":

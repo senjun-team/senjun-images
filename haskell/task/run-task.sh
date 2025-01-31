@@ -13,10 +13,14 @@ do
 done
 
 stack_additional_opts="--verbosity warn"
+stack_test_additional_opts="-f machine"
 
 if [ ! -z "${color}" ];
 then
     stack_additional_opts="${stack_additional_opts} --color ${color}"
+else
+    # stack test colored by default
+    stack_test_additional_opts="${stack_test_additional_opts} --no-color"
 fi
 
 f="$(basename -- $file)"
@@ -41,7 +45,7 @@ if [ $task_type = "code" ]; then
         cp "${HOME}/task/$f" "${project_dir}/app/Main.hs"
         # just to the test project to run all that staff
         cd ${project_dir}
-        if ! ( timeout 1000s ${build_command} && stack run | tee $f_capture ); then
+        if ! ( timeout 1000s ${build_command} && stack run --silent | tee $f_capture ); then
             echo user_solution_error_f936a25e
             exit
         fi
@@ -59,7 +63,7 @@ if [ $task_type = "code" ]; then
         cp "${HOME}/task/${f}_tests" "${project_dir}/test/Spec.hs"
         # go to /home/code_runner/user_code for stack compiling and running
         cd ${project_dir}
-        if ! (timeout 1000s ${build_command} && stack test --test-arguments="-f machine" | tee $f_capture ); then
+        if ! (timeout 1000s ${build_command} && stack test --silent --test-arguments="${stack_test_additional_opts}" | tee $f_capture ); then
             echo user_solution_error_f936a25e
             exit
         fi
