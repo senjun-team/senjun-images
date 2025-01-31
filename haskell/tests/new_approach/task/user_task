@@ -1,0 +1,4 @@
+module UserCode where
+
+class Account a where
+    getPlayedTime :: a -> Int
