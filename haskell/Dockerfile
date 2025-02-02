@@ -32,4 +32,4 @@ COPY task/run-task.sh /home/code_runner/task
 RUN mkdir /home/code_runner/playground 
 COPY playground/run-playground.sh /home/code_runner/playground
 
-# ENTRYPOINT ["bash"]
+ENTRYPOINT ["bash"]

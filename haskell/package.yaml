@@ -47,8 +47,6 @@ executables:
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N
-    - -Wno-missing-export-lists
-    - -Wno-type-defaults
     dependencies:
     - user-code
 
@@ -60,8 +58,6 @@ tests:
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N
-    - -Wno-missing-export-lists
-    - -Wno-type-defaults
     dependencies:
     - user-code
     - hspec

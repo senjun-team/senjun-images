@@ -7,7 +7,7 @@ while getopts c:f:v: flag
 do
     case "${flag}" in
         c) color=${OPTARG};;
-        f) file=${OPTARG};; # most of time it is a "wrapper" string
+        f) file=${OPTARG};;
         v) task_type=${OPTARG};;
     esac
 done
@@ -15,10 +15,9 @@ done
 stack_additional_opts="--verbosity warn"
 stack_test_additional_opts="-f machine"
 
-if [ ! -z "${color}" ];
+if [ -n "${color}" ];
 then
     stack_additional_opts="${stack_additional_opts} --color ${color}"
-else
     # stack test colored by default
     stack_test_additional_opts="${stack_test_additional_opts} --no-color"
 fi
