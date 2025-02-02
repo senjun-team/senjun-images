@@ -44,6 +44,8 @@ if ! ( timeout 20s cmake --build build/ -- -j4  > /tmp/build.txt ); then
    exit
 fi
 
+echo user_code_ok_f936a25e
+
 # e.g: sh run.sh -p path_to_main.py -o user_options -r
 if [ ${run+x} ]; then
   # run cpp project
@@ -54,7 +56,7 @@ if [ ${run+x} ]; then
   fi
 
   echo user_solution_ok_f936a25e
-  return
+  exit
 fi
 
 # e.g: sh run.sh -f dir_name -t
@@ -65,7 +67,7 @@ if [ ${test+x} ]; then
   fi
 
   echo user_solution_ok_f936a25e
-  return
+  exit
 fi
 
 # Never goes here
