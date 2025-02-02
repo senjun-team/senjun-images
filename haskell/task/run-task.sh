@@ -3,12 +3,18 @@
 # parse flags - single letters prefixed with hyphen before each argument
 # example: sh run.sh -c never -j 4
 
-while getopts c:f:v: flag
+color="never"
+file=""
+task_type="code"
+silent=""
+
+while getopts c:f:v:s flag
 do
     case "${flag}" in
         c) color=${OPTARG};;
         f) file=${OPTARG};;
         v) task_type=${OPTARG};;
+        s) silent="--silent";;
     esac
 done
 
@@ -40,11 +46,11 @@ if [ $task_type = "code" ]; then
     build_command="stack build ${stack_additional_opts}"
     # old test approach for tasks is all the Main module and it's output is
     # parsed by python
-    if [[ ${new_task_type} -eq 0 ]]; then
+    if [ ${new_task_type} -eq 0 ]; then
         cp "${HOME}/task/$f" "${project_dir}/app/Main.hs"
         # just to the test project to run all that staff
         cd ${project_dir}
-        if ! ( timeout 1000s ${build_command} && stack run --silent | tee $f_capture ); then
+        if ! ( timeout 1000s ${build_command} && stack run ${silent} | tee $f_capture ); then
             echo user_solution_error_f936a25e
             exit
         fi
@@ -62,8 +68,12 @@ if [ $task_type = "code" ]; then
         cp "${HOME}/task/${f}_tests" "${project_dir}/test/Spec.hs"
         # go to /home/code_runner/user_code for stack compiling and running
         cd ${project_dir}
-        if ! (timeout 1000s ${build_command} && stack test --silent --test-arguments="${stack_test_additional_opts}" | tee $f_capture ); then
+        if ! (timeout 990s ${build_command}); then
             echo user_solution_error_f936a25e
+            exit
+        fi
+        if ! (timeout 10s stack test ${silent} --test-arguments="${stack_test_additional_opts}"); then
+            echo tests_cases_error_f936a25e
             exit
         fi
         echo user_code_ok_f936a25e
