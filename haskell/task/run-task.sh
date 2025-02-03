@@ -27,9 +27,7 @@ then
 fi
 
 f="$(basename -- $file)"
-
-f_capture=$(mktemp -t usertask-XXXXXXXX)
-
+f_capture="/tmp/capture.txt"
 
 # if grep not find `module Main` in the user code - than it is the new style of tests
 new_task_type=0
