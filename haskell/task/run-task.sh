@@ -70,11 +70,11 @@ if [ $task_type = "code" ]; then
             echo user_solution_error_f936a25e
             exit
         fi
+        echo user_code_ok_f936a25e
         if ! (timeout 10s stack --silent test --progress-bar=none --test-arguments="${stack_test_additional_opts}"); then
             echo tests_cases_error_f936a25e
             exit
         fi
-        echo user_code_ok_f936a25e
         echo user_solution_ok_f936a25e
     fi
 fi
