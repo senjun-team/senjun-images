@@ -71,7 +71,7 @@ if [ $task_type = "code" ]; then
             exit
         fi
         echo user_code_ok_f936a25e
-        if ! (timeout 10s stack test --progress-bar=none --test-arguments="${stack_test_additional_opts}"); then
+        if ! (timeout 10s stack test ${stack_additional_opts} --progress-bar=none --test-arguments="${stack_test_additional_opts}"); then
             echo tests_cases_error_f936a25e
             exit
         fi
