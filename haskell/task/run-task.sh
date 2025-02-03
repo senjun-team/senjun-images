@@ -48,7 +48,7 @@ if [ $task_type = "code" ]; then
         cp "${HOME}/task/$f" "${project_dir}/app/Main.hs"
         # just to the test project to run all that staff
         cd ${project_dir}
-        if ! ( timeout 1000s ${build_command} && stack run | tee $f_capture ); then
+        if ! ( timeout 1000s ${build_command} && stack run ${stack_additional_opts} | tee $f_capture ); then
             echo user_solution_error_f936a25e
             exit
         fi
