@@ -7,7 +7,7 @@ color="never"
 file=""
 task_type="code"
 
-while getopts c:f:v:s flag
+while getopts c:f:v: flag
 do
     case "${flag}" in
         c) color=${OPTARG};;
@@ -37,16 +37,14 @@ grep "module Main" -q "${HOME}/task/$f" || new_task_type=1
 # and if it is not "code" user code is ok by default
 if [ $task_type = "code" ]; then
     project_dir="${HOME}/user-code"
-    # we need to build explicitly to pass additional options, like color
-    # TODO: maybe we can inject it the stack.yaml?
     build_command="stack build ${stack_additional_opts}"
     # old test approach for tasks is all the Main module and it's output is
     # parsed by python
     if [ ${new_task_type} -eq 0 ]; then
         cp "${HOME}/task/$f" "${project_dir}/app/Main.hs"
-        # just to the test project to run all that staff
         cd ${project_dir}
-        if ! ( timeout 1000s ${build_command} && stack run ${stack_additional_opts} | tee $f_capture ); then
+        # we need to build explicitly to pass additional options, like color
+        if ! ( timeout 1000s stack run ${stack_additional_opts} | tee $f_capture ); then
             echo user_solution_error_f936a25e
             exit
         fi
