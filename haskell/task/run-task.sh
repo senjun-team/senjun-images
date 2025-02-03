@@ -48,7 +48,7 @@ if [ $task_type = "code" ]; then
         cp "${HOME}/task/$f" "${project_dir}/app/Main.hs"
         # just to the test project to run all that staff
         cd ${project_dir}
-        if ! ( timeout 1000s ${build_command} && stack run --silent | tee $f_capture ); then
+        if ! ( timeout 1000s ${build_command} && stack --silent run | tee $f_capture ); then
             echo user_solution_error_f936a25e
             exit
         fi
@@ -70,7 +70,7 @@ if [ $task_type = "code" ]; then
             echo user_solution_error_f936a25e
             exit
         fi
-        if ! (timeout 10s stack test --silent --test-arguments="${stack_test_additional_opts}"); then
+        if ! (timeout 10s stack --silent test --progress-bar=none --test-arguments="${stack_test_additional_opts}"); then
             echo tests_cases_error_f936a25e
             exit
         fi
