@@ -19,11 +19,11 @@ RUN stack new user-code
 
 COPY config.yaml /home/code_runner/.stack
 
-COPY task/MachineFormatter.hs /home/code_runner/user-code/test/
-COPY package.yaml /home/code_runner/user-code
 
 # cache warming for all dependencies including tests
-RUN cd /home/code_runner/user-code/ && stack build --test
+COPY task/MachineFormatter.hs /home/code_runner/user-code/test/
+COPY package.yaml /home/code_runner/user-code
+RUN cd /home/code_runner/user-code/ && stack build --test --fast
 
 # Directory for task launching
 RUN mkdir /home/code_runner/task 

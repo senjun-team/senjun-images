@@ -28,6 +28,9 @@ formatResult item = case itemResult item of
   Pending {} -> "-"
   Failure _ reason -> case reason of
                             ExpectedButGot _ b c -> "\n? " ++ b ++ "\n- " ++ c ++ "\n"
+                            Reason r -> "\n" ++ r
+                            ColorizedReason r -> "\n" ++ r
+                            r -> "\n" ++ show r
 
 joinPath :: Path -> String
 joinPath (groups, requirement) = intercalate "." $ groups ++ [requirement]
