@@ -30,7 +30,7 @@ cp /home/code_runner/practice/ut.hpp /home/code_runner/practice/$f
 
 # configure project
 if ! ( timeout 10s cmake -Bbuild -Wno-dev -GNinja > /tmp/configure.txt ); then
-   echo "Configure error! Probably timeout"
+   echo "Configure error"
    cat /tmp/configure.txt
    echo user_solution_error_f936a25e
    exit
@@ -38,7 +38,7 @@ fi
 
 # build cpp project
 if ! ( timeout 20s cmake --build build/ -- -j4  > /tmp/build.txt ); then
-   echo "Build error! Probably timeout"
+   echo "Build error"
    cat /tmp/build.txt
    echo user_solution_error_f936a25e
    exit
@@ -50,7 +50,7 @@ if [ ${run+x} ]; then
   # run cpp project
   # TODO which name for project should use here?
   if ! ( timeout 5s ./build/main ); then
-    echo "Too long user code execution!"
+    echo "Code execution timeout"
     echo user_solution_error_f936a25e
     exit
   fi
@@ -64,7 +64,7 @@ fi
 if [ ${test+x} ]; then
   echo user_code_ok_f936a25e
   if ! ( timeout 5s ./build/tests ); then
-   echo "Too long test execution!"
+   echo "Tests execution timeout"
    echo tests_cases_error_f936a25e
    exit
   fi
