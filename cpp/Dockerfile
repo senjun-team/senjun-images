@@ -26,6 +26,10 @@ COPY task/run-task.sh task/CMakeLists.txt task/ut.hpp /home/code_runner/task/
 RUN mkdir /home/code_runner/playground 
 COPY playground/run-playground.sh /home/code_runner/playground
 
+# Directory for practice
+RUN mkdir /home/code_runner/practice 
+COPY practice/run-practice.sh task/ut.hpp /home/code_runner/practice/
+
 # Change access write for code_runner home directory to root recursively
 RUN useradd -ms /bin/bash code_runner \
     && chown -R code_runner:code_runner /home/code_runner \
