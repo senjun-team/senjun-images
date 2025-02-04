@@ -44,13 +44,13 @@ if [ $task_type = "code" ]; then
         cp "${HOME}/task/$f" "${project_dir}/app/Main.hs"
         cd ${project_dir}
         # we need to build explicitly to pass additional options, like color
-        if ! ( timeout 1000s stack run ${stack_additional_opts} | tee $f_capture ); then
+        if ! ( timeout 10s stack run ${stack_additional_opts} | tee $f_capture ); then
             echo user_solution_error_f936a25e
             exit
         fi
         echo user_code_ok_f936a25e
         # run analyze of the output
-        timeout 10s python3 "${HOME}/task/${f}_tests" $f_capture
+        timeout 5s python3 "${HOME}/task/${f}_tests" $f_capture
         if [ "$?" -ne 0 ]; then
             echo tests_cases_error_f936a25e
             exit
@@ -62,12 +62,12 @@ if [ $task_type = "code" ]; then
         cp "${HOME}/task/${f}_tests" "${project_dir}/test/Spec.hs"
         # go to /home/code_runner/user_code for stack compiling and running
         cd ${project_dir}
-        if ! (timeout 990s ${build_command}); then
+        if ! (timeout 10s ${build_command}); then
             echo user_solution_error_f936a25e
             exit
         fi
         echo user_code_ok_f936a25e
-        if ! (timeout 10s stack test ${stack_additional_opts} --progress-bar=none --test-arguments="${stack_test_additional_opts}"); then
+        if ! (timeout 5s stack test ${stack_additional_opts} --progress-bar=none --test-arguments="${stack_test_additional_opts}"); then
             echo tests_cases_error_f936a25e
             exit
         fi
