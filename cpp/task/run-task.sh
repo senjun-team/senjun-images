@@ -2,11 +2,12 @@
 
 # parse flags - single letters prefixed with hyphen before each argument
 # example: sh run.sh -f task
-while getopts f:v: flag
+while getopts f:v:c: flag
 do
     case "${flag}" in
         f) file=${OPTARG};;
         v) task_type=${OPTARG};;
+        c) color=${OPTARG};;
     esac
 done
 
