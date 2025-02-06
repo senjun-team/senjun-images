@@ -21,7 +21,6 @@ COPY config.yaml /home/code_runner/.stack
 
 
 # cache warming for all dependencies including tests
-COPY task/MachineFormatter.hs /home/code_runner/user-code/test/
 COPY package.yaml /home/code_runner/user-code
 RUN cd /home/code_runner/user-code/ && stack build --test --fast
 

@@ -17,7 +17,7 @@ do
 done
 
 stack_additional_opts="--verbosity warn"
-stack_test_additional_opts="-f machine"
+stack_test_additional_opts=""
 
 if [ -n "${color}" ];
 then
