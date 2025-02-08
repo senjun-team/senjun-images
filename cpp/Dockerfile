@@ -20,7 +20,7 @@ WORKDIR /home/code_runner
 
 # Directory for task launching
 RUN mkdir /home/code_runner/task 
-COPY task/run-task.sh task/CMakeLists.txt task/ut.hpp /home/code_runner/task/
+COPY task/run-task.sh task/CMakeLists.txt task/ut.hpp task/test_helpers.h /home/code_runner/task/
 
 # Directory for playground
 RUN mkdir /home/code_runner/playground 
@@ -28,7 +28,7 @@ COPY playground/run-playground.sh /home/code_runner/playground
 
 # Directory for practice
 RUN mkdir /home/code_runner/practice 
-COPY practice/run-practice.sh task/ut.hpp /home/code_runner/practice/
+COPY practice/run-practice.sh task/ut.hpp task/test_helpers.h /home/code_runner/practice/
 
 # Change access write for code_runner home directory to root recursively
 RUN useradd -ms /bin/bash code_runner \
