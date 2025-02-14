@@ -16,6 +16,17 @@ RUN wget https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cm
 
 ENV PATH="/usr/bin/cmake/bin:${PATH}"
 
+#make precompiled module for std
+RUN clang \
+      -std=c++23 \
+      -nostdinc++ \
+      -isystem /usr/lib/llvm-19/include/c++/v1/ \
+      -Wno-reserved-module-identifier \
+      -Wno-reserved-user-defined-literal \
+      --precompile \
+      -o /usr/local/lib/std.pcm \
+      -c /usr/lib/llvm-19/share/libc++/v1/std.cppm 
+
 WORKDIR /home/code_runner
 
 # Directory for task launching
