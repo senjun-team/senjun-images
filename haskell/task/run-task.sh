@@ -73,7 +73,7 @@ if [ $task_type = "code" ]; then
         fi
         echo user_solution_ok_f936a25e
     fi
-else
+else # TODO REFACTOR
     # run tests
     timeout 10s python3 "/home/code_runner/task/${f}_tests" $f_capture
     if [ "$?" -ne 0 ]; then
