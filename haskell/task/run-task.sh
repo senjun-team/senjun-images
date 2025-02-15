@@ -73,4 +73,13 @@ if [ $task_type = "code" ]; then
         fi
         echo user_solution_ok_f936a25e
     fi
+else
+    # run tests
+    timeout 10s python3 "/home/code_runner/task/${f}_tests" $f_capture
+    if [ "$?" -ne 0 ]; then
+        echo tests_cases_error_f936a25e
+        exit
+    fi
+
+    echo user_solution_ok_f936a25e
 fi
