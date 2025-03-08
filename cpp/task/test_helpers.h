@@ -1,4 +1,7 @@
 import std;
+#include <cerrno>
+#include <cstdio>
+
 
 namespace hlp {
 inline std::string remove_spaces(std::string text)
@@ -52,4 +55,88 @@ inline std::string exec_user_solution()
 {
     return exec("./build/main");
 }
+
+inline std::string read_text_file(std::string_view path)
+{
+    std::ifstream stream_in(path.data());
+    std::ostringstream stream_out;
+    stream_out << stream_in.rdbuf();
+    return stream_out.str();
+}
+
+// Class stdout_capture_t - helper for capturing standard program output.
+// Usage example:
+//
+//    std::string captured_text;
+//    auto stdout_receiver = [&captured_text](std::string&& txt)
+//    {
+//        captured_text = std::move(txt);
+//    };
+//    std::println("PRINTLN 0");
+//    {
+//        hlp::stdout_capture_t capture(stdout_receiver);
+//        std::println("PRINTLN 1");
+//    }
+//    std::println("PRINTLN 2");
+//    std::print("OUT: {}", captured_text);
+//
+class stdout_capture_t final
+{
+public:
+    using stdout_receiver_t = std::function<void(std::string&&)>;
+    static constexpr std::string_view def_captured_out_path = "captured_stdout.txt";
+
+    stdout_capture_t(std::string_view captured_out_path, stdout_receiver_t receiver);
+    explicit stdout_capture_t(stdout_receiver_t receiver);
+    ~stdout_capture_t();
+
+    stdout_capture_t(const stdout_capture_t&) = delete;
+    stdout_capture_t& operator=(const stdout_capture_t&) = delete;
+
+private:
+    std::string_view m_capture_path;
+    stdout_receiver_t m_receiver;
+};
+
+inline stdout_capture_t::stdout_capture_t(std::string_view captured_out_path, stdout_receiver_t receiver)
+    : m_capture_path(captured_out_path)
+    , m_receiver(receiver)
+{
+    std::fflush(stdout);
+    if (std::freopen(m_capture_path.data(), "w", stdout) == nullptr)
+    {
+        throw std::runtime_error(
+            std::format("Can't open file `{}`. Error: `{}` ({}).", captured_out_path, std::strerror(errno), errno));
+    }
+}
+
+inline stdout_capture_t::stdout_capture_t(stdout_receiver_t receiver)
+    : stdout_capture_t(def_captured_out_path, receiver)
+{
+}
+
+inline stdout_capture_t::~stdout_capture_t()
+{
+    try
+    {
+        std::fflush(stdout);
+        if (std::freopen("/proc/self/fd/0", "w", stdout) == nullptr)
+        {
+            throw std::runtime_error(
+                std::format("Can't open `/proc/self/fd/0`. Error: `{}` ({}).", std::strerror(errno), errno));
+        }
+
+        if (m_receiver)
+        {
+            m_receiver(read_text_file(m_capture_path));
+        }
+    }
+    catch (const std::exception& err)
+    {
+        std::cerr
+            << std::format("An unexpected error occurred while restoring the captured stdout. {}", err.what())
+            << std::endl;
+    }
+}
+
 } // namespace hlp
