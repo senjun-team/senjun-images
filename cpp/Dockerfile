@@ -1,4 +1,4 @@
-FROM silkeh/clang:19
+FROM silkeh/clang:20
 LABEL ru.senjun.image.authors="Shipilov Dmitry"
 
 RUN apt-get update \
@@ -20,12 +20,12 @@ ENV PATH="/usr/bin/cmake/bin:${PATH}"
 RUN clang \
       -std=c++23 \
       -nostdinc++ \
-      -isystem /usr/lib/llvm-19/include/c++/v1/ \
+      -isystem /usr/lib/llvm-20/include/c++/v1/ \
       -Wno-reserved-module-identifier \
       -Wno-reserved-user-defined-literal \
       --precompile \
       -o /usr/local/lib/std.pcm \
-      -c /usr/lib/llvm-19/share/libc++/v1/std.cppm 
+      -c /usr/lib/llvm-20/share/libc++/v1/std.cppm
 
 WORKDIR /home/code_runner
 
