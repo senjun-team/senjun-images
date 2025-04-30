@@ -6,27 +6,32 @@ while getopts f:c:v: flag
 do
     case "${flag}" in
         f) file=${OPTARG};;
+        v) task_type=${OPTARG};;
         c) color=${OPTARG};;
-        v) verbose=${OPTARG};;
     esac
 done
 
-# prepare project
-f="$(basename -- $file)"
-cp /home/code_runner/task/$f /home/code_runner/task/user-code/main.go
 cd /home/code_runner/task/user-code
 
-# we call gofmt to prevent compiler errors:
-# go compiler treats formatting errors as compilation errors!
+# if exists file with user code
+if [ $task_type = "code" ]; then
+    # prepare project
+    f="$(basename -- $file)"
+    cp /home/code_runner/task/$f /home/code_runner/task/user-code/main.go
 
-# TODO: format go code in online IDE to show user the right way
-timeout 5s gofmt -w main.go
+    # we call gofmt to prevent compiler errors:
+    # go compiler treats formatting errors as compilation errors!
 
-# build and run user code
-if ! ( timeout 10s go run . ); then
-   echo user_solution_error_f936a25e
-   exit
+    # TODO: format go code in online IDE to show user the right way
+    timeout 5s gofmt -w main.go
+
+    # build and run user code
+    if ! ( timeout 10s go run . ); then
+        echo user_solution_error_f936a25e
+        exit
+    fi
 fi
+
 echo user_code_ok_f936a25e
 
 # build and run tests 
