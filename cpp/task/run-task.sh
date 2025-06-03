@@ -30,7 +30,7 @@ if ! ( timeout 10s cmake -Wno-dev -Bbuild -GNinja > /tmp/configure.txt ); then
 fi
 
 # build cpp project
-if ! ( timeout 20s cmake --build build/ -- -j4  > /tmp/build.txt ); then
+if ! ( timeout 30s cmake --build build/ -- -j4  > /tmp/build.txt ); then
    cat /tmp/build.txt
    echo user_solution_error_f936a25e
    exit
