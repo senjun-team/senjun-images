@@ -45,11 +45,10 @@ if ! ( timeout 20s cmake --build build/ -- -j4  > /tmp/build.txt ); then
 fi
 
 
-# e.g: sh run.sh -p path_to_main.py -o user_options -r
 if [ ${run+x} ]; then
   # run cpp project
   # TODO which name for project should use here?
-  if ! ( timeout 5s ./build/main ); then
+  if ! ( timeout 5s ./build/main $user_options); then
     echo "Code execution timeout"
     echo user_solution_error_f936a25e
     exit
