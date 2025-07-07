@@ -26,7 +26,7 @@ done
 f="$(basename -- $project)"
 
 cd /home/code_runner/practice/$f 
-cp /home/code_runner/practice/ut.hpp /home/code_runner/practice/$f
+cp /home/code_runner/practice/ut.cppm /home/code_runner/practice/$f
 
 # configure project
 if ! ( timeout 10s cmake -Bbuild -Wno-dev -GNinja > /tmp/configure.txt ); then

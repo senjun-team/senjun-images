@@ -5,14 +5,7 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 //
-#if defined(__cpp_modules) && !defined(BOOST_UT_DISABLE_MODULE)
-export module boost.ut;
-export import std;
-#define BOOST_UT_EXPORT export
-#else
-#pragma once
-#define BOOST_UT_EXPORT
-#endif
+module;
 
 #if __has_include(<iso646.h>)
 #include <iso646.h>  // and, or, not, ...
@@ -104,6 +97,17 @@ export import std;
 #if __has_include(<source_location>)
 #include <source_location>
 #endif
+
+
+// #if defined(__cpp_modules) && !defined(BOOST_UT_DISABLE_MODULE)
+export module boost.ut;
+export import std;
+#define BOOST_UT_EXPORT export
+// #else
+// #pragma once
+// #define BOOST_UT_EXPORT
+// #endif
+
 
 struct unique_name_for_auto_detect_prefix_and_suffix_length_0123456789_struct_ {
 };
