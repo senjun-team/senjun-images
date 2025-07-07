@@ -1,10 +1,15 @@
-import std;
+module;
+
 #include <cerrno>
 #include <cstdio>
 
+export module TestHelpers;
 
-namespace hlp {
-inline std::string remove_spaces(std::string text)
+import std;
+
+export namespace hlp
+{
+std::string remove_spaces(std::string text)
 {
     auto filter = [](char ch) -> bool {
         return std::isspace(static_cast<unsigned char>(ch)) != 0;
@@ -14,7 +19,7 @@ inline std::string remove_spaces(std::string text)
     return { text.begin(), rng.begin() };
 }
 
-inline void to_lower(std::string & text)
+void to_lower(std::string & text)
 {
     auto make_lower = [](char ch) -> char {
         return static_cast<char>(std::tolower(static_cast<unsigned char>(ch)));
@@ -23,7 +28,7 @@ inline void to_lower(std::string & text)
     std::ranges::transform(text.begin(), text.end(), text.begin(), make_lower);
 }
 
-inline std::string normalize(std::string text)
+std::string normalize(std::string text)
 {
     std::string result = remove_spaces(std::move(text));
     to_lower(result);
@@ -31,7 +36,7 @@ inline std::string normalize(std::string text)
 }
 
 // Runs command, returns console output
-inline std::string exec(const std::string & cmd)
+std::string exec(const std::string & cmd)
 {
     std::array<char, 128> buffer;
     std::string output;
@@ -51,12 +56,12 @@ inline std::string exec(const std::string & cmd)
     return output;
 }
 
-inline std::string exec_user_solution()
+std::string exec_user_solution()
 {
     return exec("./build/main");
 }
 
-inline std::string read_text_file(std::string_view path)
+std::string read_text_file(std::string_view path)
 {
     std::ifstream stream_in(path.data());
     std::ostringstream stream_out;
@@ -98,7 +103,7 @@ private:
     stdout_receiver_t m_receiver;
 };
 
-inline stdout_capture_t::stdout_capture_t(std::string_view captured_out_path, stdout_receiver_t receiver)
+stdout_capture_t::stdout_capture_t(std::string_view captured_out_path, stdout_receiver_t receiver)
     : m_capture_path(captured_out_path)
     , m_receiver(receiver)
 {
@@ -110,12 +115,12 @@ inline stdout_capture_t::stdout_capture_t(std::string_view captured_out_path, st
     }
 }
 
-inline stdout_capture_t::stdout_capture_t(stdout_receiver_t receiver)
+stdout_capture_t::stdout_capture_t(stdout_receiver_t receiver)
     : stdout_capture_t(def_captured_out_path, receiver)
 {
 }
 
-inline stdout_capture_t::~stdout_capture_t()
+stdout_capture_t::~stdout_capture_t()
 {
     try
     {

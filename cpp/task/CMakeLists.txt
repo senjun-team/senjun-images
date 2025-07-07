@@ -14,4 +14,16 @@ IF (EXISTS "/home/code_runner/task/main.cpp")
     add_executable(main main.cpp)
 ENDIF()
 
-add_executable(tests tests.cpp)
+add_executable(tests)
+
+target_sources(tests
+    PUBLIC
+    tests.cpp
+)
+
+target_sources(tests
+    PUBLIC
+    FILE_SET senjun_modules TYPE CXX_MODULES FILES
+    ut.cppm
+    test_helpers.cppm
+)
