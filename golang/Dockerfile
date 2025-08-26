@@ -1,4 +1,4 @@
-FROM golang:1.22.5
+FROM golang:1.24
 LABEL ru.senjun.image.authors="Shipilov Dmitry"
 
 WORKDIR /home/code_runner
@@ -10,6 +10,10 @@ COPY task/run-task.sh /home/code_runner/task
 # Directory for playground
 RUN mkdir /home/code_runner/playground 
 COPY playground/run-playground.sh /home/code_runner/playground
+
+# Directory for practice
+RUN mkdir /home/code_runner/practice 
+COPY practice/run-practice.sh /home/code_runner/practice
 
 RUN mkdir -p task/user-code && cd task/user-code && go mod init senjun/user/user-code
 
