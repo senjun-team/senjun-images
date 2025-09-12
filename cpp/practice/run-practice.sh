@@ -29,7 +29,7 @@ cd /home/code_runner/practice/$f
 cp /home/code_runner/practice/ut.cppm /home/code_runner/practice/$f
 
 # configure project
-if ! ( timeout 10s cmake -Bbuild -Wno-dev -GNinja > /tmp/configure.txt ); then
+if ! ( CXX=clang++ timeout 30s cmake -Bbuild -Wno-dev -GNinja > /tmp/configure.txt ); then
    echo "Configure error"
    cat /tmp/configure.txt
    echo user_solution_error_f936a25e
@@ -37,7 +37,7 @@ if ! ( timeout 10s cmake -Bbuild -Wno-dev -GNinja > /tmp/configure.txt ); then
 fi
 
 # build cpp project
-if ! ( timeout 20s cmake --build build/ -- -j4  > /tmp/build.txt ); then
+if ! ( timeout 40s cmake --build build/ -- -j4  > /tmp/build.txt ); then
    echo "Build error"
    cat /tmp/build.txt
    echo user_solution_error_f936a25e

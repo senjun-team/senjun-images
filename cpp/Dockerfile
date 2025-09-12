@@ -2,6 +2,7 @@ FROM silkeh/clang:20
 LABEL ru.senjun.image.authors="Shipilov Dmitry"
 
 RUN apt-get update \
+    && apt install -y unzip libgtest-dev \
     && apt install -y ninja-build \
     && apt-get purge -y cmake
 
@@ -29,6 +30,12 @@ RUN clang \
       /usr/lib/llvm-20/share/libc++/v1/std.cppm
 
 WORKDIR /home/code_runner
+
+RUN mkdir -p /third_party/google/ && cd /third_party/google/ \
+    && wget https://github.com/google/benchmark/archive/refs/tags/v1.9.4.zip \
+    -q -O benchmark.zip \
+    && unzip benchmark.zip \
+    && rm benchmark.zip && cd /home/code_runner/
 
 # Directory for task launching
 RUN mkdir /home/code_runner/task 
