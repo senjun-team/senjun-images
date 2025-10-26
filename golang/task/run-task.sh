@@ -40,9 +40,18 @@ cp /home/code_runner/task/$f /home/code_runner/task/user-code/main_test.go
 
 # here we don't call gofmt because we rely on the fact that
 # the tests are already formatted
-if ! ( timeout 15s go test -v); then
-   echo tests_cases_error_f936a25e
-   exit
+
+
+if [ $task_type = "code" ]; then
+   if ! ( timeout 15s go test -v); then
+       echo tests_cases_error_f936a25e
+       exit
+   fi
+else
+   if ! ( timeout 15s go test -v > output.txt); then
+      echo tests_cases_error_f936a25e
+      exit
+   fi
 fi
 
 echo user_solution_ok_f936a25e
