@@ -46,9 +46,18 @@ fi
 
 echo user_code_ok_f936a25e
 
-if ! ( timeout 4s ./build/tests ); then
-   echo tests_cases_error_f936a25e
-   exit
+if [ $task_type = "code" ]; then
+   if ! ( timeout 4s ./build/tests ); then
+      echo tests_cases_error_f936a25e
+      exit
+   fi
+else
+   if ! ( timeout 4s ./build/tests 1> /dev/null 2> /tmp/message.txt ); then
+      cat /tmp/message.txt
+      echo tests_cases_error_f936a25e
+      exit
+   fi
 fi
+
 
 echo user_solution_ok_f936a25e
