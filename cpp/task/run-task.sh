@@ -29,12 +29,21 @@ if ! ( timeout 10s cmake -Wno-dev -Bbuild -GNinja > /tmp/configure.txt ); then
    exit
 fi
 
-SET_COLOR=$(tput setaf 2) # Set text color to green
-RESET_ALL=$(tput sgr0)  # Reset all
+if [ ! -z "$color" ];
+then
+   SET_COLOR=$(tput setaf 2) # Set text color to green
+   RESET_ALL=$(tput sgr0)  # Reset all
+   CLICOLOR_FORCE_VAL=1
+else
+   SET_COLOR=""
+   RESET_ALL=""
+   CLICOLOR_FORCE_VAL=0
+fi
+
 
 # build cpp project
 # --quiet option is for ninja to suppress build steps output
-if ! ( CLICOLOR_FORCE=1 timeout 30s cmake --build build/ -- -j4   --quiet > /tmp/compile.txt ); then
+if ! ( CLICOLOR_FORCE=$CLICOLOR_FORCE_VAL timeout 30s cmake --build build/ -- -j4   --quiet > /tmp/compile.txt ); then
    cat /tmp/compile.txt
    echo user_solution_error_f936a25e
    exit
