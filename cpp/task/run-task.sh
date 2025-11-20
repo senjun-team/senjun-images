@@ -29,18 +29,28 @@ if ! ( timeout 10s cmake -Wno-dev -Bbuild -GNinja > /tmp/configure.txt ); then
    exit
 fi
 
+SET_COLOR=$(tput setaf 2) # Set text color to green
+RESET_ALL=$(tput sgr0)  # Reset all
+
 # build cpp project
-if ! ( timeout 30s cmake --build build/ -- -j4  > /tmp/build.txt ); then
-   cat /tmp/build.txt
+# --quiet option is for ninja to suppress build steps output
+if ! ( CLICOLOR_FORCE=1 timeout 30s cmake --build build/ -- -j4   --quiet > /tmp/compile.txt ); then
+   cat /tmp/compile.txt
    echo user_solution_error_f936a25e
    exit
 fi
 
-# check task "what will this code output?"
 if [ $task_type = "code" ]; then
    if ! ( timeout 4s ./build/main ); then
       echo user_solution_error_f936a25e
       exit
+   fi
+
+   if [ -s /tmp/compile.txt ]; then
+      echo ""
+      echo "${SET_COLOR}Compiler warnings:${RESET_ALL}"
+      cat /tmp/compile.txt
+      echo ""
    fi
 fi
 
@@ -51,7 +61,7 @@ if [ $task_type = "code" ]; then
       echo tests_cases_error_f936a25e
       exit
    fi
-else
+else # check task "what will this code output?"
    if ! ( timeout 4s ./build/tests 1> /dev/null 2> /tmp/message.txt ); then
       cat /tmp/message.txt
       echo tests_cases_error_f936a25e
