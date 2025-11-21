@@ -37,7 +37,7 @@ then
 else
    SET_COLOR=""
    RESET_ALL=""
-   CLICOLOR_FORCE_VAL=01
+   CLICOLOR_FORCE_VAL=0
 fi
 
 
