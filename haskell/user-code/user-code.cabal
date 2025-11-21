@@ -1,17 +1,23 @@
 cabal-version:   3.0
 name:            user-code
 version:         0.1.0.0
-license:         NONE
+license:         MIT
 build-type:      Simple
 extra-doc-files: CHANGELOG.md
 
 common warnings
     ghc-options: -Wall
 
-test-suite user-code-test
+library lib
+    import: warnings
+    exposed-modules: UserCode
+    hs-source-dirs: app
+    build-depends: base ^>=4.21.0.0, tuple, text
+
+test-suite test
     import:           warnings
     default-language: Haskell2010
     type:             exitcode-stdio-1.0
     hs-source-dirs:   test
     main-is:          Main.hs
-    build-depends:    base ^>=4.19.1.0, tuple, hspec, text
+    build-depends:    base ^>=4.21.0.0, hspec, lib
