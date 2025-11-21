@@ -29,10 +29,10 @@ if ! ( timeout 10s cmake -Wno-dev -Bbuild -GNinja > /tmp/configure.txt ); then
    exit
 fi
 
-if [ ! -z "$color" ];
+if [ $color = "always" ];
 then
    SET_COLOR=$(tput setaf 2) # Set text color to green
-   RESET_ALL=$(tput sgr0)  # Reset all
+   RESET_ALL=$(tput sgr0)    # Reset all
    CLICOLOR_FORCE_VAL=1
 else
    SET_COLOR=""
@@ -66,9 +66,18 @@ fi
 echo user_code_ok_f936a25e
 
 if [ $task_type = "code" ]; then
-   if ! ( timeout 4s ./build/tests ); then
-      echo tests_cases_error_f936a25e
-      exit
+   if [ $color = "always" ];
+   then
+      if ! ( timeout 4s ./build/tests ); then
+         echo tests_cases_error_f936a25e
+         exit
+      fi
+   else
+      # Strip color-codes with sed
+      if ! ( timeout 4s ./build/tests | sed -r "s/\x1B\[([0-9]{1,3}(;[0-9]{1,2};?)?)?[ mGK]//g" ); then
+         echo tests_cases_error_f936a25e
+         exit
+      fi
    fi
 else # check task "what will this code output?"
    if ! ( timeout 4s ./build/tests 1> /dev/null 2> /tmp/message.txt ); then
