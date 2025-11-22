@@ -10,14 +10,14 @@ ENV DEBIAN_FRONTEND=noninteractive \
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     clang \
-	clang-tools \
+    clang-tools \
     libc++-dev \
-	libgtest-dev \
+    libgtest-dev \
     ninja-build \
     cmake \
     wget \
-	unzip \
-	&& apt-get clean \
+    unzip \
+    && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Create symlink for clang-scan-deps (used for C++ module dependency scanning)
@@ -27,7 +27,7 @@ RUN ln -s /usr/lib/llvm*/bin/clang-scan-deps clang-scan-deps
 RUN useradd --create-home --shell /bin/bash code_runner \
     && mkdir -p /home/code_runner/{task,practice,playground} \
     && chown -R code_runner:code_runner /home/code_runner \
-	&& chmod -R 1750 /home/code_runner
+    && chmod -R 1750 /home/code_runner
 
 # Download and extract Google Benchmark library
 RUN mkdir -p /third_party/google/ \
@@ -50,5 +50,6 @@ COPY --chown=code_runner:code_runner practice/ /home/code_runner/practice/
 # Switch to non-privileged user
 USER code_runner
 WORKDIR /home/code_runner
+RUN chown -R code_runner:code_runner /home/code_runner/playground/project/
 
 ENTRYPOINT ["/bin/bash"]
