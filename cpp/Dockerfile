@@ -19,7 +19,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 	unzip \
 	&& apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-	
+
 # Create symlink for clang-scan-deps (used for C++ module dependency scanning)
 RUN ln -s /usr/lib/llvm*/bin/clang-scan-deps clang-scan-deps
 
@@ -28,7 +28,7 @@ RUN useradd --create-home --shell /bin/bash code_runner \
     && mkdir -p /home/code_runner/{task,practice,playground} \
     && chown -R code_runner:code_runner /home/code_runner \
 	&& chmod -R 1750 /home/code_runner
-	
+
 # Download and extract Google Benchmark library
 RUN mkdir -p /third_party/google/ \
     && wget -q -O /tmp/benchmark.zip https://github.com/google/benchmark/archive/refs/tags/v1.9.4.zip \
@@ -43,9 +43,9 @@ RUN chmod +x ./build_module.sh  \
     && ./build_module.sh TestHelpers test_helpers.cppm std
 
 # Copy workspace directories
-COPY task/ /home/code_runner/task/
-COPY playground/ /home/code_runner/playground/
-COPY practice/ /home/code_runner/practice/
+COPY --chown=code_runner:code_runner task/ /home/code_runner/task/
+COPY --chown=code_runner:code_runner playground/ /home/code_runner/playground/
+COPY --chown=code_runner:code_runner practice/ /home/code_runner/practice/
 
 # Switch to non-privileged user
 USER code_runner
