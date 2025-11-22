@@ -28,17 +28,19 @@ RUN useradd --create-home --shell /bin/bash code_runner \
     && chmod -R 750 /home/code_runner \
     && setfacl -R -d -m u:code_runner:rwx,g:code_runner:rx,o::0 /home/code_runner
 
-# Download and extract Google Benchmark library
-RUN mkdir -p /third_party/google/ \
+# Download and extract libraries
+RUN mkdir -p /third_party/{google,boost}/ \
     && git clone --branch v1.9.4 --depth 1 \
-    https://github.com/google/benchmark.git /third_party/google/benchmark
+    https://github.com/google/benchmark.git /third_party/google/benchmark \
+    && git clone --branch v2.3.1 --depth 1 \
+    https://github.com/boost-ext/ut.git /third_party/boost/ut
 
 # Build precompiled C++ modules
-COPY build_module.sh task/ut.cppm task/test_helpers.cppm ./
+COPY build_module.sh task/test_helpers.cppm ./
 RUN chmod +x ./build_module.sh  \
     && ./build_module.sh std /usr/lib/llvm*/share/libc++/v1/std.cppm \
     && ./build_module.sh std.compat /usr/lib/llvm*/share/libc++/v1/std.compat.cppm std \
-    && ./build_module.sh boost.ut ut.cppm std \
+    && ./build_module.sh boost.ut /third_party/boost/ut/include/boost/ut.cppm std \
     && ./build_module.sh TestHelpers test_helpers.cppm std
 
 # Copy workspace directories
