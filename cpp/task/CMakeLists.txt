@@ -25,8 +25,7 @@ add_compile_options(
 # Поиск модуля std
 find_file(STD_MODULE_FILE std.pcm PATHS ${MOD_DIR} REQUIRED)
 # и сборка main при наличии
-find_file(MAIN_CPP_FILE main.cpp PATHS "/home/code_runner/task" NO_DEFAULT_PATH)
-if (${MAIN_CPP_FILE})
+if (existis main.cpp)
     add_executable(main main.cpp ${MOD_DIR}/std.o)
     target_compile_options(main PUBLIC
         -fmodule-file=std=${STD_MODULE_FILE}
