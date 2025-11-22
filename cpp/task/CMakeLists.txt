@@ -25,7 +25,7 @@ add_compile_options(
 # Поиск модуля std
 find_file(STD_MODULE_FILE std.pcm PATHS ${MOD_DIR} REQUIRED)
 # и сборка main при наличии
-if (existis main.cpp)
+if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/main.cpp")
     add_executable(main main.cpp ${MOD_DIR}/std.o)
     target_compile_options(main PUBLIC
         -fmodule-file=std=${STD_MODULE_FILE}
