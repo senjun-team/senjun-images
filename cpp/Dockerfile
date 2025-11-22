@@ -1,61 +1,54 @@
-FROM silkeh/clang:20
-LABEL ru.senjun.image.authors="Shipilov Dmitry"
+# cmake 3.31.6 and clang 20.1.8
+FROM ubuntu:26.04
 
-RUN apt-get update \
-    && apt install -y unzip libgtest-dev \
-    && apt install -y ninja-build \
-    && apt-get purge -y cmake
+# Set environment variables to avoid interactive prompts and set locale
+ENV DEBIAN_FRONTEND=noninteractive \
+    LANG=C.UTF-8 \
+    LC_ALL=C.UTF-8
 
-ARG CMAKE_VERSION=3.31.2
+# Updatе packages and install base system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    clang \
+	clang-tools \
+    libc++-dev \
+	libgtest-dev \
+    ninja-build \
+    cmake \
+    wget \
+	unzip \
+	&& apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+	
+# Create symlink for clang-scan-deps (used for C++ module dependency scanning)
+RUN ln -s /usr/lib/llvm*/bin/clang-scan-deps clang-scan-deps
 
-RUN wget https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}-Linux-x86_64.sh \
-    -q -O /tmp/cmake-install.sh \
-    && chmod u+x /tmp/cmake-install.sh \
-    && mkdir /usr/bin/cmake \
-    && /tmp/cmake-install.sh --skip-license --prefix=/usr/bin/cmake \
-    && rm /tmp/cmake-install.sh
+# Create user for security
+RUN useradd --create-home --shell /bin/bash code_runner \
+    && mkdir -p /home/code_runner/{task,practice,playground} \
+    && chown -R code_runner:code_runner /home/code_runner \
+	&& chmod -R 1750 /home/code_runner
+	
+# Download and extract Google Benchmark library
+RUN mkdir -p /third_party/google/ \
+    && wget -q -O /tmp/benchmark.zip https://github.com/google/benchmark/archive/refs/tags/v1.9.4.zip \
+    && unzip /tmp/benchmark.zip -d /third_party/google/ \
+    && rm /tmp/benchmark.zip
 
-ENV PATH="/usr/bin/cmake/bin:${PATH}"
+# Build precompiled C++ modules
+COPY build_module.sh task/ut.cppm task/test_helpers.cppm ./
+RUN chmod +x ./build_module.sh  \
+    && ./build_module.sh std /usr/lib/llvm*/share/libc++/v1/std.cppm \
+    && ./build_module.sh boost.ut ut.cppm std \
+    && ./build_module.sh TestHelpers test_helpers.cppm std
 
-# make precompiled module for std
-RUN clang \
-      -std=c++23 \
-      -O3 \
-      -nostdinc++ \
-      -isystem /usr/lib/llvm-20/include/c++/v1/ \
-      -Wno-reserved-module-identifier \
-      -Wno-reserved-user-defined-literal \
-      --precompile \
-      -o /usr/local/lib/std.pcm \
-      /usr/lib/llvm-20/share/libc++/v1/std.cppm
+# Copy workspace directories
+COPY task/ /home/code_runner/task/
+COPY playground/ /home/code_runner/playground/
+COPY practice/ /home/code_runner/practice/
 
+# Switch to non-privileged user
+USER code_runner
 WORKDIR /home/code_runner
 
-RUN mkdir -p /third_party/google/ && cd /third_party/google/ \
-    && wget https://github.com/google/benchmark/archive/refs/tags/v1.9.4.zip \
-    -q -O benchmark.zip \
-    && unzip benchmark.zip \
-    && rm benchmark.zip && cd /home/code_runner/
-
-# Directory for task launching
-RUN mkdir /home/code_runner/task 
-
-# ut.hpp: https://github.com/boost-ext/ut?tab=readme-ov-file
-COPY task/run-task.sh task/CMakeLists.txt task/ut.cppm task/test_helpers.cppm /home/code_runner/task/
-
-# Directory for playground
-RUN mkdir /home/code_runner/playground 
-COPY playground/run-playground.sh /home/code_runner/playground
-
-# Directory for practice
-RUN mkdir /home/code_runner/practice 
-COPY practice/run-practice.sh task/ut.cppm task/test_helpers.cppm /home/code_runner/practice/
-
-# Change access write for code_runner home directory to root recursively
-RUN useradd -ms /bin/bash code_runner \
-    && chown -R code_runner:code_runner /home/code_runner \
-    && chmod -R 1750 /home/code_runner
-
-USER code_runner
-
-ENTRYPOINT ["bash"]
+ENTRYPOINT ["/bin/bash"]
