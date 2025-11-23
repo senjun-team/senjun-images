@@ -42,7 +42,7 @@ COPY practice/ /home/code_runner/practice/
 # Create user for security
 RUN useradd --create-home --shell /bin/bash code_runner \
     && chown -R code_runner:code_runner /home/code_runner \
-    && chmod -R 750 /home/code_runner \
+    && chmod -R 750 /home/code_runner
 
 # Switch to non-privileged user
 USER code_runner
