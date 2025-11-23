@@ -8,8 +8,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 # Для цветного вывода логов
 set(CMAKE_COLOR_DIAGNOSTICS ON)
-# Путь к precompiled модулям включая *.pcm и *.o
-set(MOD_DIR "/usr/local/lib")
 
 # Глобальные настройки компилятора
 link_libraries(-lc++)
@@ -22,23 +20,15 @@ add_compile_options(
     -O3
 )
 
-# Поиск модуля std
-find_file(STD_MODULE_FILE std.pcm PATHS ${MOD_DIR} REQUIRED)
-# и сборка main при наличии
+# Подключение модулей
+include(precompiled_modules.cmake)
+
+# Сборка main при наличии
 if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/main.cpp")
-    add_executable(main main.cpp ${MOD_DIR}/std.o)
-    target_compile_options(main PUBLIC
-        -fmodule-file=std=${STD_MODULE_FILE}
-    )
+    add_executable(main main.cpp)
+    target_link_libraries(main PUBLIC std_module)
 endif()
 
-# Поиск модулей для тестов
-find_file(UT_MODULE_FILE boost.ut.pcm PATHS ${MOD_DIR} REQUIRED)
-find_file(TH_MODULE_FILE TestHelpers.pcm PATHS ${MOD_DIR} REQUIRED)
-# и запуск тестов
-add_executable(tests tests.cpp ${MOD_DIR}/std.o ${MOD_DIR}/boost.ut.o ${MOD_DIR}/TestHelpers.o)
-target_compile_options(tests PUBLIC
-    -fmodule-file=std=${STD_MODULE_FILE}
-    -fmodule-file=boost.ut=${UT_MODULE_FILE}
-    -fmodule-file=TestHelpers=${TH_MODULE_FILE}
-)
+# Запуск тестов
+add_executable(tests tests.cpp)
+target_link_libraries(tests PUBLIC test_modules)
