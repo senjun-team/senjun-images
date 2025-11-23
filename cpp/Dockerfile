@@ -29,10 +29,9 @@ RUN useradd --create-home --shell /bin/bash code_runner \
     && setfacl -R -d -m u:code_runner:rwx,g:code_runner:rx,o::0 /home/code_runner
 
 # Download and extract libraries
-RUN mkdir -p /third_party/{google,boost}/ \
-    && git clone --branch v1.9.4 --depth 1 \
-    https://github.com/google/benchmark.git /third_party/google/benchmark \
-    && git clone --branch v2.3.1 --depth 1 \
+RUN git clone --branch v1.9.4 --depth 1 \
+    https://github.com/google/benchmark.git /third_party/google/benchmark && \
+    git clone --branch v2.3.1 --depth 1 \
     https://github.com/boost-ext/ut.git /third_party/boost/ut
 
 # Build precompiled C++ modules
@@ -44,9 +43,9 @@ RUN chmod +x ./build_module.sh  \
     && ./build_module.sh TestHelpers test_helpers.cppm std
 
 # Copy workspace directories
-COPY task/ /home/code_runner/task/
-COPY playground/ /home/code_runner/playground/
-COPY practice/ /home/code_runner/practice/
+COPY --chown=code_runner:code_runner task/ /home/code_runner/task/
+COPY --chown=code_runner:code_runner playground/ /home/code_runner/playground/
+COPY --chown=code_runner:code_runner practice/ /home/code_runner/practice/
 
 # Switch to non-privileged user
 USER code_runner
