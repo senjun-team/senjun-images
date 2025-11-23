@@ -12,7 +12,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     clang-21 clang-tools-21 libc++-21-dev \
     cmake ninja-build \
     libgtest-dev \
-    acl \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
@@ -44,7 +43,6 @@ COPY practice/ /home/code_runner/practice/
 RUN useradd --create-home --shell /bin/bash code_runner \
     && chown -R code_runner:code_runner /home/code_runner \
     && chmod -R 750 /home/code_runner \
-    && setfacl -R -d -m u:code_runner:rwx,g:code_runner:rx,o::0 /home/code_runner
 
 # Switch to non-privileged user
 USER code_runner
