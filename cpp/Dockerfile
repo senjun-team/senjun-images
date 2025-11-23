@@ -12,7 +12,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     clang-21 clang-tools-21 libc++-21-dev \
     cmake ninja-build \
     libgtest-dev \
-    acl \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
@@ -20,13 +19,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # and create symlink for modern clang
 RUN ln -s /usr/lib/llvm*/bin/clang-scan-deps /usr/bin/clang-scan-deps && \
     ln -s /usr/bin/clang++* /usr/bin/clang++
-
-# Create user for security
-RUN useradd --create-home --shell /bin/bash code_runner \
-    && mkdir -p /home/code_runner/{task,practice,playground} \
-    && chown -R code_runner:code_runner /home/code_runner \
-    && chmod -R 750 /home/code_runner \
-    && setfacl -R -d -m u:code_runner:rwx,g:code_runner:rx,o::0 /home/code_runner
 
 # Download and extract libraries
 RUN git clone --branch v1.9.4 --depth 1 \
@@ -43,9 +35,14 @@ RUN chmod +x ./build_module.sh  \
     && ./build_module.sh TestHelpers test_helpers.cppm std
 
 # Copy workspace directories
-COPY --chown=code_runner:code_runner task/ /home/code_runner/task/
-COPY --chown=code_runner:code_runner playground/ /home/code_runner/playground/
-COPY --chown=code_runner:code_runner practice/ /home/code_runner/practice/
+COPY task/ /home/code_runner/task/
+COPY playground/ /home/code_runner/playground/
+COPY practice/ /home/code_runner/practice/
+
+# Create user for security
+RUN useradd --create-home --shell /bin/bash code_runner \
+    && chown -R code_runner:code_runner /home/code_runner \
+    && chmod -R 750 /home/code_runner
 
 # Switch to non-privileged user
 USER code_runner
