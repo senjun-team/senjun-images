@@ -25,7 +25,7 @@ RUN useradd -ms /bin/bash -u 1000 code_runner \
 
 USER code_runner
 
-RUN cd /home/code_runner/user-code && cabal update 
+RUN cd /home/code_runner/user-code && cabal update -v
 RUN cd /home/code_runner/user-code && cabal build test
 
 ENTRYPOINT ["bash"]
