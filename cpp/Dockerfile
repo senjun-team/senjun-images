@@ -1,61 +1,51 @@
-FROM silkeh/clang:20
-LABEL ru.senjun.image.authors="Shipilov Dmitry"
+# cmake 3.31.6 and clang 21.1.2
+FROM ubuntu:26.04
 
-RUN apt-get update \
-    && apt install -y unzip libgtest-dev \
-    && apt install -y ninja-build \
-    && apt-get purge -y cmake
+# Set environment variables to avoid interactive prompts and set locale
+ENV DEBIAN_FRONTEND=noninteractive \
+    LANG=C.UTF-8 \
+    LC_ALL=C.UTF-8
 
-ARG CMAKE_VERSION=3.31.2
+# Updatе packages and install base system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates git \
+    clang-21 clang-tools-21 libc++-21-dev \
+    cmake ninja-build \
+    libgtest-dev \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN wget https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}-Linux-x86_64.sh \
-    -q -O /tmp/cmake-install.sh \
-    && chmod u+x /tmp/cmake-install.sh \
-    && mkdir /usr/bin/cmake \
-    && /tmp/cmake-install.sh --skip-license --prefix=/usr/bin/cmake \
-    && rm /tmp/cmake-install.sh
+# Create symlink for clang-scan-deps (used for C++ module dependency scanning)
+# and create symlink for modern clang
+RUN ln -s /usr/lib/llvm*/bin/clang-scan-deps /usr/bin/clang-scan-deps && \
+    ln -s /usr/bin/clang++* /usr/bin/clang++
 
-ENV PATH="/usr/bin/cmake/bin:${PATH}"
+# Download and extract libraries
+RUN git clone --branch v1.9.4 --depth 1 \
+    https://github.com/google/benchmark.git /third_party/google/benchmark && \
+    git clone --branch v2.3.1 --depth 1 \
+    https://github.com/boost-ext/ut.git /third_party/boost/ut
 
-# make precompiled module for std
-RUN clang \
-      -std=c++23 \
-      -O3 \
-      -nostdinc++ \
-      -isystem /usr/lib/llvm-20/include/c++/v1/ \
-      -Wno-reserved-module-identifier \
-      -Wno-reserved-user-defined-literal \
-      --precompile \
-      -o /usr/local/lib/std.pcm \
-      /usr/lib/llvm-20/share/libc++/v1/std.cppm
+# Build precompiled C++ modules
+COPY build_module.sh task/test_helpers.cppm ./
+RUN chmod +x ./build_module.sh  \
+    && ./build_module.sh std /usr/lib/llvm*/share/libc++/v1/std.cppm \
+    && ./build_module.sh std.compat /usr/lib/llvm*/share/libc++/v1/std.compat.cppm std \
+    && ./build_module.sh boost.ut /third_party/boost/ut/include/boost/ut.cppm std \
+    && ./build_module.sh TestHelpers test_helpers.cppm std
 
+# Copy workspace directories
+COPY task/ /home/code_runner/task/
+COPY playground/ /home/code_runner/playground/
+COPY practice/ /home/code_runner/practice/
+
+# Create user for security
+RUN useradd --create-home --shell /bin/bash code_runner \
+    && chown -R code_runner:code_runner /home/code_runner \
+    && chmod -R 750 /home/code_runner
+
+# Switch to non-privileged user
+USER code_runner
 WORKDIR /home/code_runner
 
-RUN mkdir -p /third_party/google/ && cd /third_party/google/ \
-    && wget https://github.com/google/benchmark/archive/refs/tags/v1.9.4.zip \
-    -q -O benchmark.zip \
-    && unzip benchmark.zip \
-    && rm benchmark.zip && cd /home/code_runner/
-
-# Directory for task launching
-RUN mkdir /home/code_runner/task 
-
-# ut.hpp: https://github.com/boost-ext/ut?tab=readme-ov-file
-COPY task/run-task.sh task/CMakeLists.txt task/ut.cppm task/test_helpers.cppm /home/code_runner/task/
-
-# Directory for playground
-RUN mkdir /home/code_runner/playground 
-COPY playground/run-playground.sh /home/code_runner/playground
-
-# Directory for practice
-RUN mkdir /home/code_runner/practice 
-COPY practice/run-practice.sh task/ut.cppm task/test_helpers.cppm /home/code_runner/practice/
-
-# Change access write for code_runner home directory to root recursively
-RUN useradd -ms /bin/bash code_runner \
-    && chown -R code_runner:code_runner /home/code_runner \
-    && chmod -R 1750 /home/code_runner
-
-USER code_runner
-
-ENTRYPOINT ["bash"]
+ENTRYPOINT ["/bin/bash"]

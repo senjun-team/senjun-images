@@ -11,10 +11,10 @@ done
 
 f="$(basename -- $project)"
 
-cd /home/code_runner/playground/$f 
+cd /home/code_runner/playground/
 
 # configure project
-if ! ( timeout 5s cmake -Bbuild -Wno-dev -GNinja > /tmp/configure.txt ); then
+if ! ( timeout 5s cmake -S project -B build -Wno-dev -G Ninja > /tmp/configure.txt ); then
    cat /tmp/configure.txt
    echo user_solution_error_f936a25e
    exit
