@@ -28,7 +28,7 @@ f="$(basename -- $project)"
 cd /home/code_runner/practice/
 
 # configure project
-if ! ( timeout 30s cmake -S project -B build -W no-dev -G Ninja > /tmp/configure.txt ); then
+if ! ( timeout 30s cmake -S project -B build -Wno-dev -G Ninja > /tmp/configure.txt ); then
    echo "Configure error"
    cat /tmp/configure.txt
    echo user_solution_error_f936a25e
