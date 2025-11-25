@@ -19,7 +19,7 @@ cd /home/code_runner/user-code/
 
 f_capture="/tmp/capture.txt"
 
-if ! ( timeout 10s stack build --verbosity warn  --allow-different-user  --ghc-options '-fno-warn-missing-export-lists -Wno-type-defaults' && stack exec user-code-exe  | tee $f_capture ); then
+if ! ( timeout 10s cabal build --ghc-options '-fno-warn-missing-export-lists -Wno-type-defaults' && cabal exec user-code-exe  | tee $f_capture ); then
    echo user_solution_error_f936a25e
    exit
 fi

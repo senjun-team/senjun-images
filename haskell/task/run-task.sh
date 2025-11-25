@@ -11,11 +11,12 @@ do
     esac
 done
 
-stack_additional_opts=""
+cabal_additional_opts=""
 
+# disable color for output for build systems that cannot accept it
 if [ ! -z "$color" ];
 then
-    stack_additional_opts="${stack_additional_opts} --color ${color}"
+    cabal_additional_opts="${cabal_additional_opts} -fdiagnostics-color=${color}"
 fi
 
 f="$(basename -- $file)"
@@ -31,10 +32,10 @@ rm $f_capture > /dev/null 2>&1
 if [ $task_type = "code" ]; then
     cp /home/code_runner/task/$f /home/code_runner/user-code/app/Main.hs
 
-    # go to /home/code_runner/user_code for stack compiling and running
+    # go to /home/code_runner/user_code for cabal compiling and running
     cd /home/code_runner/user-code
 
-    if ! ( timeout 10s stack build $stack_additional_opts --verbosity warn --ghc-options '-fno-warn-missing-export-lists -Wno-type-defaults' && stack exec user-code-exe  | tee $f_capture ); then
+    if ! ( timeout 10s cabal build $cabal_additional_opts --ghc-options '-fno-warn-missing-export-lists -Wno-type-defaults' && cabal exec user-code-exe  | tee $f_capture ); then
         echo user_solution_error_f936a25e
         exit
     fi
