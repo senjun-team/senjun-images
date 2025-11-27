@@ -1,7 +1,7 @@
-FROM python:3.12.0-slim
+FROM python:3.14.0-slim
 LABEL ru.senjun.image.authors="Shipilov Dmitry"
 
-RUN python3 -m pip install mypy pympler objsize
+RUN python3 -m pip install mypy pympler objsize pydantic sqlalchemy
 
 WORKDIR /home/code_runner
 
