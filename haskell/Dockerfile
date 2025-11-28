@@ -1,4 +1,4 @@
-FROM haskell:9.8.2-slim-buster
+FROM haskell:9.12.2-slim-bookworm
 
 RUN apt-get -y update && apt-get -y upgrade \
     && apt-get -y install python3
