@@ -1,4 +1,4 @@
-FROM rust:1.79.0-slim-buster
+FROM rust:1.91.1-slim
 LABEL ru.senjun.image.authors="Shipilov Dmitry"
 
 WORKDIR /home/code_runner
