@@ -20,7 +20,7 @@ cd /home/code_runner/playground/$f
 timeout 5s gofmt -s -w /home/code_runner/playground/$f
 
 # build and run user code
-if ! ( timeout 10s go run /home/code_runner/playground/$f/cmd); then
+if ! ( timeout 20s go run /home/code_runner/playground/$f/cmd); then
    echo user_solution_error_f936a25e
    exit
 fi
