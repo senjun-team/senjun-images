@@ -50,7 +50,7 @@ fi
 # e.g: sh run.sh -f dir_name -t
 if [ ${test+x} ]; then
   echo user_code_ok_f936a25e
-  if ! ( timeout 10s go test . ); then
+  if ! ( timeout 10s go test -v -race . ); then
    echo "Tests execution timeout"
    echo tests_cases_error_f936a25e
    exit
