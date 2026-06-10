@@ -51,7 +51,7 @@ fi
 if [ ${test+x} ]; then
   echo user_code_ok_f936a25e
   if ! ( timeout 15s go test -v -race > output.txt); then
-   echo "Tests execution timeout"
+   echo "Tests didn't pass"
    cat output.txt
    echo tests_cases_error_f936a25e
    exit
