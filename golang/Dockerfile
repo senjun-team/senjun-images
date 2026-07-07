@@ -1,4 +1,4 @@
-FROM golang:1.25.0
+FROM golang:1.26.4
 LABEL ru.senjun.image.authors="Shipilov Dmitry"
 
 WORKDIR /home/code_runner

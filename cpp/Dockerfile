@@ -1,4 +1,4 @@
-# cmake 3.31.6 and clang 21.1.2
+# cmake 3.31.6 and clang 22.1.2
 FROM ubuntu:26.04
 
 # Set environment variables to avoid interactive prompts and set locale
@@ -9,7 +9,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
 # Updatе packages and install base system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates git \
-    clang-21 clang-tools-21 libc++-21-dev \
+    clang-22 clang-tools-22 libc++-22-dev \
     cmake ninja-build \
     libgtest-dev \
     && apt-get clean \
